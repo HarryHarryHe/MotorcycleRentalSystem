@@ -7,7 +7,7 @@ import java.util.*;
 public class License {
     private String licenseID;
     private static Set<String> licenseIDSet = new HashSet<>();
-    private Client client = new Client("Haitao", "He", Tools.parseToDate("1999-04-28"));
+    private Client client;
     private Date issueDate;
     private boolean isFormal;
 
