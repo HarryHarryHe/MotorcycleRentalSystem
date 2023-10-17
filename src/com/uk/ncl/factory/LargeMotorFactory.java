@@ -2,7 +2,6 @@ package com.uk.ncl.factory;
 
 import com.uk.ncl.constant.MyConstants;
 import com.uk.ncl.entity.Client;
-import com.uk.ncl.po.Motor;
 import com.uk.ncl.entity.Motor;
 
 import java.util.ArrayList;
