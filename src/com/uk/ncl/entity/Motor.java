@@ -1,4 +1,4 @@
-package com.uk.ncl.po;
+package com.uk.ncl.entity;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -52,4 +52,7 @@ public abstract class Motor {
         usedRegNumSet.add(regNum);
         return regNum;
     }
+
+    //according to the type of motor to invoke different methods
+
 }

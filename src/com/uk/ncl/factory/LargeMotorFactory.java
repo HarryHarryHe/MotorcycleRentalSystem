@@ -1,9 +1,9 @@
 package com.uk.ncl.factory;
 
-import com.uk.ncl.Tools;
 import com.uk.ncl.constant.MyConstants;
-import com.uk.ncl.po.LargeMotorcycle;
+import com.uk.ncl.entity.Client;
 import com.uk.ncl.po.Motor;
+import com.uk.ncl.entity.Motor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +17,9 @@ public class LargeMotorFactory extends MotorFactory {
     private int availableNum = rentedMaxNum - rentedNum;
     @Override
     public List<Motor> create() {
-        List<LargeMotorcycle> largeMotorcycles =new ArrayList<>(rentedMaxNum);
+        List<Client.LargeMotorcycle> largeMotorcycles =new ArrayList<>(rentedMaxNum);
         for (int i=0;i<rentedMaxNum;i++){
-            LargeMotorcycle largeMotorcycle = new LargeMotorcycle();
+            Client.LargeMotorcycle largeMotorcycle = new Client.LargeMotorcycle();
             largeMotorcycle.setBatteryLevel(batteryLevel);
             largeMotorcycle.setConsumedPerKM(consumedPerKM);
             largeMotorcycle.setRegNum(largeMotorcycle.genRegNum());

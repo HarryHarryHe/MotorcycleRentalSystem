@@ -1,7 +1,6 @@
-package com.uk.ncl.po;
+package com.uk.ncl.entity;
 
 import com.uk.ncl.constant.MyConstants;
-import com.uk.ncl.factory.LargeMotorFactory;
 
 public class LargeMotorcycle extends Motor {
     private int batteryLevel = MyConstants.LARGE_BATTERY_LEVEL;
@@ -9,20 +8,11 @@ public class LargeMotorcycle extends Motor {
     private int rentedMaxNum = MyConstants.RENTED_LARGE_MAX_NUM;
     private int rentedNum = 0;
     private int availableNum = rentedMaxNum - rentedNum;
-    private String regNum;
 
     public LargeMotorcycle() {
-    }
-    public LargeMotorcycle(int rentedMaxNum) {
+
     }
 
-    public String getRegNum() {
-        return regNum;
-    }
-
-    public void setRegNum(String regNum) {
-        this.regNum = regNum;
-    }
 
     public int getBatteryLevel() {
         return batteryLevel;
