@@ -2,6 +2,8 @@ package com.uk.ncl.factory;
 
 import com.uk.ncl.po.Motor;
 
+import java.util.List;
+
 public abstract class MotorFactory {
-    public abstract Motor create();
+    public abstract List<Motor> create();
 }

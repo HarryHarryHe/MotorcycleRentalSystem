@@ -4,8 +4,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 public class Tools {
+
     public Tools() {
     }
 
@@ -30,6 +34,7 @@ public class Tools {
         int cYear = Integer.parseInt(currentSplit[0]);
         return cYear-bYear;
     }
+
 
     public static void main(String[] args) {
         System.out.println(getAgeByBirth("1999-04-28"));

@@ -3,13 +3,14 @@ package com.uk.ncl.po;
 import com.uk.ncl.po.RentalContract;
 import com.uk.ncl.po.RentalManager;
 
-public abstract class RentalCompany {
-    private String regNum;
-    private int battery;
-    private int kilometers;
+import java.util.HashMap;
+import java.util.List;
 
-    private int motorNum;
+public class RentalCompany {
+    private int availableLargeNum;
+    private int availableSmallNum;
+    private int largeRentedNum = 0;
+    private int SmallRentedNum = 0;
+    private List<HashMap<Motor, Client>> motorWithClientList;
 
-    private RentalManager rentalManager;
-    private RentalContract rentalContract;
 }
