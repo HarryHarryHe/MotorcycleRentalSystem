@@ -1,2 +1,5 @@
-package com.uk.ncl.po;public class License {
+package com.uk.ncl.po;
+
+public class License {
+
 }

@@ -1,2 +1,4 @@
-package com.uk.ncl.po;public class RentalManager {
+package com.uk.ncl.po;
+
+public class RentalManager {
 }

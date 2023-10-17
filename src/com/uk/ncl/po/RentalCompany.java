@@ -1,4 +1,4 @@
-package com.uk.ncl.factory;
+package com.uk.ncl.po;
 
 import com.uk.ncl.po.RentalContract;
 import com.uk.ncl.po.RentalManager;
