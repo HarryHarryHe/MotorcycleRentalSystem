@@ -1,7 +1,7 @@
 package com.uk.ncl.factory;
 
-import com.uk.ncl.po.LargeMotorcycle;
-import com.uk.ncl.po.Motor;
+import com.uk.ncl.entity.LargeMotorcycle;
+import com.uk.ncl.entity.Motor;
 
 public class LargeMotorFactory extends MotorFactory {
     @Override

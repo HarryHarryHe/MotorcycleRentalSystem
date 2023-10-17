@@ -1,4 +1,4 @@
-package com.uk.ncl.po;
+package com.uk.ncl.entity;
 
 import com.uk.ncl.Tools;
 
@@ -10,10 +10,11 @@ public class Client {
     private String lastName;
     private String name;
     private String birth;
-
     private int age;
 
     private License license;
+    private boolean isRenting;
+    private Motor motor;
 
     public Client() {
     }
@@ -74,6 +75,22 @@ public class Client {
 
     public void setBirth(Date birth) {
         this.birth = Tools.getFormatDate(birth);
+    }
+
+    public boolean isRenting() {
+        return isRenting;
+    }
+
+    public void setRenting(boolean renting) {
+        isRenting = renting;
+    }
+
+    public Motor getMotor() {
+        return motor;
+    }
+
+    public void setMotor(Motor motor) {
+        this.motor = motor;
     }
 
     @Override

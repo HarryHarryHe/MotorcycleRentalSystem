@@ -1,4 +1,4 @@
-package com.uk.ncl.po;
+package com.uk.ncl.entity;
 
 import com.uk.ncl.constant.MyConstants;
 

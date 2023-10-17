@@ -1,4 +1,4 @@
-package com.uk.ncl.po;
+package com.uk.ncl.entity;
 
 public abstract class Motor {
 
@@ -9,4 +9,7 @@ public abstract class Motor {
 //    private int batteryLevel;
 
     public abstract void run();
+
+    //according to the type of motor to invoke different methods
+
 }

@@ -1,7 +1,6 @@
 import com.uk.ncl.Tools;
-import com.uk.ncl.po.Client;
+import com.uk.ncl.entity.Client;
 
-import java.text.DateFormat;
 import java.util.Date;
 
 public class Main {

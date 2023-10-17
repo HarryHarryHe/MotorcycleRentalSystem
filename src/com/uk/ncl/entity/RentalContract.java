@@ -1,4 +1,4 @@
-package com.uk.ncl.po;
+package com.uk.ncl.entity;
 
 public class RentalContract {
 }
