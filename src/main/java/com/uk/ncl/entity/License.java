@@ -14,6 +14,19 @@ public class License {
     public License() {
     }
 
+    public License(String licenseID, Date issueDate, boolean isFormal) {
+        this.licenseID = licenseID;
+        this.issueDate = issueDate;
+        this.isFormal = isFormal;
+    }
+
+    public License(String licenseID, Client client, Date issueDate, boolean isFormal) {
+        this.licenseID = licenseID;
+        this.client = client;
+        this.issueDate = issueDate;
+        this.isFormal = isFormal;
+    }
+
     public String getLicenseID() {
         return licenseID;
     }
@@ -38,12 +51,12 @@ public class License {
         this.client = client;
     }
 
-    public boolean isFormal() {
+    public boolean getIsFormal() {
         return isFormal;
     }
 
-    public void setFormal(boolean formal) {
-        isFormal = formal;
+    public void setIsFormal(boolean formal) {
+        this.isFormal = formal;
     }
 
     public Date getIssueDate() {
@@ -54,7 +67,7 @@ public class License {
         this.issueDate = issueDate;
     }
 
-    private String genLicenseID() {
+    public String genLicenseID() {
         StringJoiner licenseIDSj = new StringJoiner("-");
         String[] name = client.getName().split(" ");
         String firstName = name[0].substring(0, 1);

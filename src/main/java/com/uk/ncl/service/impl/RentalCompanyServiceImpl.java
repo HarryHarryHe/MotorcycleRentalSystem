@@ -71,10 +71,16 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
 
     @Override
     public int canIssue(Motor motor, Client client) {
+        if (motor==null || client==null){
+            //invalid param
+            return -1;
+        }
         List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
         for (HashMap<Motor, Client> motorClientHashMap : largeMotorWithClientList) {
             for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
-                if (client != null && client.equals(entry.getValue())) {
+                //motor has been rented to others or client has rented
+                if (motorClientHashMap.get(entry.getKey())!=null
+                        || client.equals(entry.getValue())) {
                     //already have rented
                     return 1;
                 }
@@ -83,14 +89,16 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
         for (HashMap<Motor, Client> motorClientHashMap : smallMotorWithClientList) {
             for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
-                if (client != null && client.equals(entry.getValue())) {
+                //motor has been rented to others or client has rented
+                if ( motorClientHashMap.get(entry.getKey())!=null
+                        || client.equals(entry.getValue())) {
                     //already have rented
                     return 1;
                 }
             }
         }
         License license = client.getLicense();
-        boolean isFormal = license.isFormal();
+        boolean isFormal = license.getIsFormal();
         if (!isFormal) {
             //is not formal
             return 2;
@@ -102,11 +110,12 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
                 && (age < MyConstants.RENT_LARGE_LIMIT_AGE || issuedYear < MyConstants.RENT_LARGE_LICENSE_LIMIT_YEAR)) {
             //proof fail
             return 3;
-        } else if (motor.getClass().equals(SmallMotorcycle.class)) {
-
+        } else if (motor.getClass().equals(SmallMotorcycle.class)
+                && (age < MyConstants.RENT_SMALL_LIMIT_AGE || issuedYear < MyConstants.RENT_SMALL_LICENSE_LIMIT_YEAR)) {
+            //proof fail
+            return 3;
         }
-
-
+        //could tent
         return 0;
     }
 
