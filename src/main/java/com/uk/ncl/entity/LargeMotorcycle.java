@@ -67,9 +67,6 @@ public class LargeMotorcycle extends Motor {
         return "LargeMotorcycle{" +
                 "batteryLevel=" + batteryLevel +
                 ", consumedPerKM=" + consumedPerKM +
-                ", rentedMaxNum=" + rentedMaxNum +
-                ", rentedNum=" + rentedNum +
-                ", availableNum=" + availableNum +
                 ", regNum='" + regNum + '\'' +
                 '}';
     }

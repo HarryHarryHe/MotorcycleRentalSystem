@@ -68,9 +68,6 @@ public class SmallMotorcycle extends Motor {
         return "SmallMotorcycle{" +
                 "batteryLevel=" + batteryLevel +
                 ", consumedPerKM=" + consumedPerKM +
-                ", rentedMaxNum=" + rentedMaxNum +
-                ", rentedNum=" + rentedNum +
-                ", availableNum=" + availableNum +
                 ", regNum='" + regNum + '\'' +
                 '}';
     }
