@@ -8,4 +8,9 @@ public class MyConstants {
     public static final int LARGE_CONSUMED_PER_KM = 2;
     public static final int SMALL_BATTERY_LEVEL = 50;
     public static final int LARGE_BATTERY_LEVEL = 75;
+
+    public static final int RENT_SMALL_LIMIT_AGE = 20;
+    public static final int RENT_SMALL_LICENSE_LIMIT_YEAR = 1;
+    public static final int RENT_LARGE_LIMIT_AGE = 25;
+    public static final int RENT_LARGE_LICENSE_LIMIT_YEAR = 5;
 }

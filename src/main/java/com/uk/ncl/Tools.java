@@ -23,7 +23,7 @@ public class Tools {
         }
         return parse;
     }
-    public static int getAgeByBirth(String dateString){
+    public static int getYearByDateStr(String dateString){
         String[] DateSplit = dateString.split("-");
         int bYear = Integer.parseInt(DateSplit[0]);
         String currentDate = getFormatDate(new Date());
@@ -31,9 +31,11 @@ public class Tools {
         int cYear = Integer.parseInt(currentSplit[0]);
         return cYear-bYear;
     }
-
+    public static int getYearByDate(Date date){
+        return getYearByDateStr(getFormatDate(date));
+    }
 
     public static void main(String[] args) {
-        System.out.println(getAgeByBirth("1999-04-28"));
+        System.out.println(getYearByDateStr("1999-04-28"));
     }
 }

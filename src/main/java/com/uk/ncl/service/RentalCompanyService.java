@@ -12,6 +12,7 @@ public interface RentalCompanyService {
      * available to rent
      *
      * @param motorClazz the clazz of the subclass of Motor
+     * @return the amount of specific availableMotor
      *
      */
     <T extends Motor> int getAvailableMotorByType(Class<T> motorClazz);
@@ -19,12 +20,14 @@ public interface RentalCompanyService {
     /**
      * Given a person, this method returns the electric motorcycle they are currently renting
      * (if any).
+     * @param client the specific client
      */
     Motor getRentedMotorByClient(Client client);
 
     /**
      * This method returns a collection of all the electric motorcycle currently rented out (if
      * any).
+     * @return the list of being rented motors
      */
     List<Motor> getRentedMotors();
 
@@ -32,8 +35,12 @@ public interface RentalCompanyService {
      * this method determines whether
      * the person is eligible to rent a motorcycle of the specified type and, if there is a
      * motorcycle available, issues an electric motorcycle of the specified type
+     * @param client specific client
+     * @param license specific license
+     * @param motor the type of motor
+     * @return whether company can issue the motor to the client
      */
-    int issueMotorToClient(Client client, License license, Motor motor);
+    boolean issueMotorToClient(Client client, License license, Motor motor);
 
     /**
      * according to client's info to decide whether can clients rent the motor
@@ -45,7 +52,7 @@ public interface RentalCompanyService {
      * 3: rentSmall should age >= 20 and license >= 1 year
      * 4: rentLarge should age >= 25 and license >= 5 years
      */
-    int canIssue(Client client);
+    int canIssue(Motor motor,Client client);
 
     /**
      * calculate the gap of battery level to max level

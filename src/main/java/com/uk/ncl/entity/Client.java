@@ -28,7 +28,7 @@ public class Client {
         this.birth = Tools.getFormatDate(birth);
         this.name = firstName.substring(0, 1).toUpperCase() + firstName.substring(1) + " " +
                 lastName.substring(0, 1).toUpperCase() + lastName.substring(1);
-        this.age = Tools.getAgeByBirth(Tools.getFormatDate(birth));
+        this.age = Tools.getYearByDateStr(Tools.getFormatDate(birth));
     }
 
     public int getAge() {
