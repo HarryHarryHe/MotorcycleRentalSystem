@@ -25,15 +25,15 @@ public class SmallMotorFactory extends MotorFactory {
             smallMotorcycle.setBatteryLevel(batteryLevel);
             smallMotorcycle.setConsumedPerKM(consumedPerKM);
             smallMotorcycle.setRegNum(smallMotorcycle.genRegNum());
-            //将组装好的摩托车加入规定大小的摩托车列表中
+            //Add the assembled motorcycle to the list of motorcycles of specified sizes
             motorcycles.add(smallMotorcycle);
             HashMap<Motor, Client> smallMotorWithClientMap = new HashMap<>();
-            //初始化各摩托车与用户的绑定关系
+            //Initialize the binding relationship between each motorcycle and the user
             smallMotorWithClientMap.put(smallMotorcycle, null);
-            //将绑定关系添加进列表中
+            //Add bindings to the list
             smallMotorWithClientList.add(smallMotorWithClientMap);
         }
-        //公司管理摩托车与人绑定关系列表
+        //List of binding relationships between company-managed motorcycles and people
         rentalCompany.setSmallMotorWithClientList(smallMotorWithClientList);
         return true;
     }

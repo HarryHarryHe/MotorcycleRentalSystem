@@ -8,6 +8,7 @@ import com.uk.ncl.factory.SmallMotorFactory;
 import com.uk.ncl.service.RentalCompanyService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class RentalCompanyServiceImpl implements RentalCompanyService {
 
@@ -54,6 +55,27 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
 
     @Override
     public Motor getRentedMotorByClient(Client client) {
+        List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
+        List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
+        //Get the Motor corresponding to the specified Client
+        List<Motor> smallCollect = smallMotorWithClientList.stream()
+                .flatMap(map -> map.entrySet().stream())
+                .filter(entry -> client.equals(entry.getValue()))
+                .map(Map.Entry::getKey) // get Motor
+                .toList();
+        //it means it find a motor link to the client
+        if (smallCollect.size()!=0) {
+            return smallCollect.get(0);
+        }
+        List<Motor> largeCollect = largeMotorWithClientList.stream()
+                .flatMap(map -> map.entrySet().stream())
+                .filter(entry -> client.equals(entry.getValue()))
+                .map(Map.Entry::getKey) // get Motor
+                .toList();
+        if (largeCollect.size()!=0) {
+            return largeCollect.get(0);
+        }
+        //it doesn't find any motor by the client
         return null;
     }
 
@@ -64,39 +86,65 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
 
     @Override
     public boolean issueMotorToClient(Client client, License license, Motor motor) {
+        client.setLicense(license);
+        if (canIssue(motor, client) != 0) {
+            return false;
+        }
+        String motorType = getMotorType(motor);
+        if (!MyConstants.TYPE_UNKNOWN.equals(motorType)){
+            if (MyConstants.TYPE_LARGE.equals(motorType)) {
+                List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
+                for (HashMap<Motor, Client> hashMap : largeMotorWithClientList) {
+                    for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
+                        if (entry.getValue() == null) {
+                            //issue motor
+                            entry.setValue(client);
+                        }
+                    }
+                }
+            }
+            if (MyConstants.TYPE_SMALL.equals(motorType)) {
+                if (MyConstants.TYPE_SMALL.equals(motorType)) {
+                    List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
+                    for (HashMap<Motor, Client> hashMap : smallMotorWithClientList) {
+                        for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
+                            if (entry.getValue() == null) {
+                                //issue motor
+                                entry.setValue(client);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
-
-        return false;
+    /**
+     * get the type by motor
+     * @param motor motor instance
+     * @return string of the motor type
+     */
+    public String getMotorType(Motor motor) {
+        if (motor.getClass().equals(LargeMotorcycle.class)){
+            return MyConstants.TYPE_LARGE;
+        }
+        if (motor.getClass().equals(SmallMotorcycle.class)) {
+            return MyConstants.TYPE_SMALL;
+        }
+        return MyConstants.TYPE_UNKNOWN;
     }
 
     @Override
     public int canIssue(Motor motor, Client client) {
-        if (motor==null || client==null){
+        if (motor == null || client == null) {
             //invalid param
             return -1;
         }
         List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
-        for (HashMap<Motor, Client> motorClientHashMap : largeMotorWithClientList) {
-            for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
-                //motor has been rented to others or client has rented
-                if (motorClientHashMap.get(entry.getKey())!=null
-                        || client.equals(entry.getValue())) {
-                    //already have rented
-                    return 1;
-                }
-            }
-        }
+        if (IsOccupied(client, largeMotorWithClientList)) return 1;
         List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
-        for (HashMap<Motor, Client> motorClientHashMap : smallMotorWithClientList) {
-            for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
-                //motor has been rented to others or client has rented
-                if ( motorClientHashMap.get(entry.getKey())!=null
-                        || client.equals(entry.getValue())) {
-                    //already have rented
-                    return 1;
-                }
-            }
-        }
+        if (IsOccupied(client, smallMotorWithClientList)) return 1;
         License license = client.getLicense();
         boolean isFormal = license.getIsFormal();
         if (!isFormal) {
@@ -117,6 +165,20 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         }
         //could tent
         return 0;
+    }
+
+    private boolean IsOccupied(Client client, List<HashMap<Motor, Client>> smallMotorWithClientList) {
+        for (HashMap<Motor, Client> motorClientHashMap : smallMotorWithClientList) {
+            for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
+                //motor has been rented to others or client has rented
+                if (motorClientHashMap.get(entry.getKey()) != null
+                        || client.equals(entry.getValue())) {
+                    //already have rented
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

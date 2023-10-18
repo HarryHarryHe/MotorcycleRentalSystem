@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class RentalCompanyServiceImplTest {
+public class RentalCompanyServiceImplTest{
 
     static MotorFactory largeMotorFactory = null;
     static MotorFactory smallMotorFactory = null;
@@ -39,7 +39,7 @@ public class RentalCompanyServiceImplTest {
 
     @Test
     public void canIssue() {
-        Client client = new Client("Haitao", "He", Tools.parseToDate("1998-04-28"));
+        Client client = new Client("Haitao", "He", Tools.parseToDate("1999-04-28"));
         License license = new License();
         license.setClient(client);
         license.setIssueDate(Tools.parseToDate("2016-09-09"));
@@ -49,5 +49,12 @@ public class RentalCompanyServiceImplTest {
         List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
         LargeMotorcycle motor = (LargeMotorcycle) largeMotorWithClientList.get(0).entrySet().iterator().next().getKey();
         System.out.println(rentalCompanyService.canIssue(motor,client));
+    }
+
+    @Test
+    public void getRentedMotorByClient() {
+        Client client = new Client("Haitao", "He", Tools.parseToDate("1999-04-28"));
+        Motor rentedMotorByClient = rentalCompanyService.getRentedMotorByClient(client);
+        System.out.println(rentedMotorByClient);
     }
 }

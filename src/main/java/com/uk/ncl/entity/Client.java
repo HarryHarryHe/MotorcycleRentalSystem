@@ -110,4 +110,17 @@ public class Client {
                 ", motor=" + motor +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Client client = (Client) o;
+        return age == client.age && Objects.equals(firstName, client.firstName) && Objects.equals(lastName, client.lastName) && Objects.equals(name, client.name) && Objects.equals(birth, client.birth);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, name, birth, age);
+    }
 }

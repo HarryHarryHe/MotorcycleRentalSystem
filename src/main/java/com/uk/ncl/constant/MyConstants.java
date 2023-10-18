@@ -13,4 +13,8 @@ public class MyConstants {
     public static final int RENT_SMALL_LICENSE_LIMIT_YEAR = 1;
     public static final int RENT_LARGE_LIMIT_AGE = 25;
     public static final int RENT_LARGE_LICENSE_LIMIT_YEAR = 5;
+
+    public static final String TYPE_LARGE = "LARGE";
+    public static final String TYPE_SMALL = "SMALL";
+    public static final String TYPE_UNKNOWN = "UNKNOWN";
 }
