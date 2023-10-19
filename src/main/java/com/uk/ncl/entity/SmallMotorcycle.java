@@ -43,11 +43,14 @@ public class SmallMotorcycle extends Motor {
 
     @Override
     public int chargeMotor(int capacity) {
-        int gap2Max = 0;
-        if (capacity < MyConstants.SMALL_BATTERY_LEVEL) {
-            gap2Max = MyConstants.SMALL_BATTERY_LEVEL - capacity;
+        int currentBattery = 0;
+        //limit charging capacity per time
+        if (capacity > MyConstants.SMALL_BATTERY_LEVEL) {
+            capacity = MyConstants.SMALL_BATTERY_LEVEL;
         }
-        return gap2Max;
+        currentBattery = MyConstants.SMALL_BATTERY_LEVEL - capacity;
+        this.setBatteryLevel(Math.min(currentBattery, MyConstants.SMALL_BATTERY_LEVEL));
+        return capacity;
     }
 
     @Override
@@ -55,8 +58,12 @@ public class SmallMotorcycle extends Motor {
         if (!canRide(client)){
             return 0;
         }
-        int consumption = calConsumption(client, distance);
         Motor motor = super.getRentedMotorByClient(client);
+        //ride another type of motor
+        if (!motor.getClass().equals(this.getClass())){
+            return 0;
+        }
+        int consumption = calConsumption(client, distance);
         //cal the motor battery level
         motor.setBatteryLevel(motor.getBatteryLevel() - consumption);
         return consumption;

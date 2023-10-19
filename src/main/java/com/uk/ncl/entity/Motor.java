@@ -141,6 +141,7 @@ public abstract class Motor {
     }
 
     protected boolean hasMotorAndBattery(Client client, List<HashMap<Motor, Client>> motorWithClientList) {
+        boolean hasMotorAndBattery = false;
         for (HashMap<Motor, Client> motorClientHashMap : motorWithClientList) {
             for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
                 if (client.equals(entry.getValue())

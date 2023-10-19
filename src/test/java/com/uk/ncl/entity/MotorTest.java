@@ -27,6 +27,7 @@ public class MotorTest {
         largeMotorFactory.create();
         smallMotorFactory.create();
     }
+
     @Test
     public void isFullyCharged() {
         Motor largeMotor = new LargeMotorcycle(55);
@@ -37,7 +38,21 @@ public class MotorTest {
 
     @Test
     public void chargeMotor() {
-
+        Client client = new Client("Haitao", "He", Tools.parseToDate("1996-07-20"));
+        License license = new License(Tools.parseToDate("2016-09-01"), true);
+        license.setClient(client);
+        license.setLicenseID(license.genLicenseID());
+        int consumption = 0;
+        System.out.println("Rent Large: " + rentalCompanyService.issueMotorToClient(client, license, new LargeMotorcycle()));
+        Motor motor = rentalCompanyService.getRentedMotorByClient(client);
+        consumption = motor.ride(client, 40);
+        assertEquals(80, consumption);
+//        System.out.println("consumption: " + consumption);
+        assertEquals(-5, motor.getBatteryLevel());
+//        System.out.println("motor battery level before charging: " + motor.getBatteryLevel());
+        motor.chargeMotor(500);
+        assertEquals(70, motor.getBatteryLevel());
+//        System.out.println("motor battery level after charging: " + motor.getBatteryLevel());
     }
 
     @Test
@@ -47,11 +62,14 @@ public class MotorTest {
         license.setClient(client);
         license.setLicenseID(license.genLicenseID());
         int consumption = 0;
-        Motor largeMotor = new LargeMotorcycle();
-        Motor smallMotor = new SmallMotorcycle();
-        consumption = largeMotor.ride(client, 10);
-        System.out.println(consumption);
-        consumption = smallMotor.ride(client, 20);
-        System.out.println(consumption);
+        System.out.println("Rent Large: " + rentalCompanyService.issueMotorToClient(client, license, new LargeMotorcycle()));
+        Motor motor = rentalCompanyService.getRentedMotorByClient(client);
+        consumption = motor.ride(client, 80);
+        System.out.println("consumption: " + consumption);
+        System.out.println("motor battery level: " + motor.getBatteryLevel());
+        System.out.println("Rent Large: " + rentalCompanyService.issueMotorToClient(client, license, new LargeMotorcycle()));
+        System.out.println("Rent Small: " + rentalCompanyService.issueMotorToClient(client, license, new SmallMotorcycle()));
+//        consumption = smallMotor.ride(client, 20);
+//        System.out.println(consumption);
     }
 }

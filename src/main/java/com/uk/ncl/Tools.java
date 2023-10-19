@@ -35,7 +35,4 @@ public class Tools {
         return getYearByDateStr(getFormatDate(date));
     }
 
-    public static void main(String[] args) {
-        System.out.println(getYearByDateStr("1999-04-28"));
-    }
 }

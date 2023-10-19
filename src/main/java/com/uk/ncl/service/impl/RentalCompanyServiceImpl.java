@@ -19,15 +19,6 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
     public RentalCompanyServiceImpl() {
     }
 
-    public static void main(String[] args) {
-        RentalCompanyServiceImpl rentalCompanyService = new RentalCompanyServiceImpl();
-        LargeMotorcycle largeMotorcycle = new LargeMotorcycle();
-//        int availableMotorByType = rentalCompanyService.getAvailableMotorByType(largeMotorcycle);
-
-
-    }
-
-
     @Override
     public <T extends Motor> int getAvailableMotorByType(Class<T> motorClazz) {
         int count = 0;
@@ -107,6 +98,7 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         if (canIssue(motor, client) != 0) {
             return false;
         }
+
         String motorType = getMotorType(motor);
         if (!MyConstants.TYPE_UNKNOWN.equals(motorType)) {
             if (MyConstants.TYPE_LARGE.equals(motorType)) {
@@ -228,16 +220,17 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
                     //available
                     beOccupied = false;
                 }
+                //motor has been rented to this client, return directly
                 if (entry.getValue() == client) {
                     //had been rented
                     beOccupied = true;
+                    return beOccupied;
                 }
             }
         }
         return beOccupied;
     }
 
-    //TODO 电量返回
     @Override
     public int terminateRental(Client client) {
         Motor motor = null;

@@ -87,16 +87,4 @@ public class License {
         }
         return licenseID;
     }
-
-    public static void main(String[] args) {
-        License license = new License();
-        String issueDateStr = "2000-03-21";
-        String birthDateStr = "1980-05-04";
-        Date issueDate = Tools.parseToDate(issueDateStr);
-        Date birthDate = Tools.parseToDate(birthDateStr);
-        license.setClient(new Client("Sihuo","Zhao",birthDate));
-        license.setIssueDate(issueDate);
-        String licenseID = license.genLicenseID();
-        System.out.println(licenseID);
-    }
 }

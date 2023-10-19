@@ -56,22 +56,27 @@ public class LargeMotorcycle extends Motor {
 
     @Override
     public int chargeMotor(int capacity) {
-        int gap2Max = 0;
-        if (capacity < MyConstants.LARGE_BATTERY_LEVEL) {
-            gap2Max = MyConstants.LARGE_BATTERY_LEVEL - capacity;
+        int currentBattery = 0;
+        //limit charging capacity per time
+        if (capacity > MyConstants.LARGE_BATTERY_LEVEL) {
+            capacity = MyConstants.LARGE_BATTERY_LEVEL;
         }
-
-        return gap2Max;
+        currentBattery = this.batteryLevel + capacity;
+        this.setBatteryLevel(Math.min(currentBattery, MyConstants.LARGE_BATTERY_LEVEL));
+        return capacity;
     }
 
-    //TODO fix bug
     @Override
     public int ride(Client client, int distance) {
-        if (!canRide(client)){
+        if (!canRide(client)) {
+            return 0;
+        }
+        //ride another type of motor
+        Motor motor = super.getRentedMotorByClient(client);
+        if (!motor.getClass().equals(this.getClass())) {
             return 0;
         }
         int consumption = calConsumption(client, distance);
-        Motor motor = super.getRentedMotorByClient(client);
         //cal the motor battery level
         motor.setBatteryLevel(motor.getBatteryLevel() - consumption);
         return consumption;
