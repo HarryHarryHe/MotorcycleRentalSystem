@@ -57,4 +57,11 @@ public class RentalCompanyServiceImplTest{
         Motor rentedMotorByClient = rentalCompanyService.getRentedMotorByClient(client);
         System.out.println(rentedMotorByClient);
     }
+
+    @Test
+    public void getRentedMotors() {
+        for (Motor motor: rentalCompanyService.getRentedMotors()){
+            System.out.println(motor);
+        }
+    }
 }

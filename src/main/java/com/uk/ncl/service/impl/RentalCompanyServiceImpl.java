@@ -64,7 +64,7 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
                 .map(Map.Entry::getKey) // get Motor
                 .toList();
         //it means it find a motor link to the client
-        if (smallCollect.size()!=0) {
+        if (smallCollect.size() != 0) {
             return smallCollect.get(0);
         }
         List<Motor> largeCollect = largeMotorWithClientList.stream()
@@ -72,7 +72,7 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
                 .filter(entry -> client.equals(entry.getValue()))
                 .map(Map.Entry::getKey) // get Motor
                 .toList();
-        if (largeCollect.size()!=0) {
+        if (largeCollect.size() != 0) {
             return largeCollect.get(0);
         }
         //it doesn't find any motor by the client
@@ -81,7 +81,23 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
 
     @Override
     public List<Motor> getRentedMotors() {
-        return null;
+        List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
+        List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
+        //according to the null of Client to check whether the motor has been rented, then collect into List
+        List<Motor> rentedSmallList = smallMotorWithClientList.stream()
+                .flatMap(map -> map.entrySet().stream())
+                .filter(entry -> entry.getValue() != null)
+                .map(Map.Entry::getKey)
+                .toList();
+        List<Motor> rentedLargeList = largeMotorWithClientList.stream()
+                .flatMap(map -> map.entrySet().stream())
+                .filter(entry -> entry.getValue() != null)
+                .map(Map.Entry::getKey)
+                .toList();
+        List<Motor> totalRentedMotors = new ArrayList<>();
+        totalRentedMotors.addAll(rentedSmallList);
+        totalRentedMotors.addAll(rentedLargeList);
+        return totalRentedMotors;
     }
 
     @Override
@@ -91,7 +107,7 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
             return false;
         }
         String motorType = getMotorType(motor);
-        if (!MyConstants.TYPE_UNKNOWN.equals(motorType)){
+        if (!MyConstants.TYPE_UNKNOWN.equals(motorType)) {
             if (MyConstants.TYPE_LARGE.equals(motorType)) {
                 List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
                 for (HashMap<Motor, Client> hashMap : largeMotorWithClientList) {
@@ -122,11 +138,12 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
 
     /**
      * get the type by motor
+     *
      * @param motor motor instance
      * @return string of the motor type
      */
     public String getMotorType(Motor motor) {
-        if (motor.getClass().equals(LargeMotorcycle.class)){
+        if (motor.getClass().equals(LargeMotorcycle.class)) {
             return MyConstants.TYPE_LARGE;
         }
         if (motor.getClass().equals(SmallMotorcycle.class)) {
