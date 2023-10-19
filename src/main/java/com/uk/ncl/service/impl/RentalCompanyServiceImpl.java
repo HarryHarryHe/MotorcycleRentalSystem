@@ -115,25 +115,28 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
                         if (entry.getValue() == null) {
                             //issue motor
                             entry.setValue(client);
+                            int largeRentedNum = rentalCompany.getLargeRentedNum();
+                            rentalCompany.setLargeRentedNum(largeRentedNum + 1);
                         }
                     }
                 }
             }
             if (MyConstants.TYPE_SMALL.equals(motorType)) {
-                if (MyConstants.TYPE_SMALL.equals(motorType)) {
-                    List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
-                    for (HashMap<Motor, Client> hashMap : smallMotorWithClientList) {
-                        for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
-                            if (entry.getValue() == null) {
-                                //issue motor
-                                entry.setValue(client);
-                            }
+                List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
+                for (HashMap<Motor, Client> hashMap : smallMotorWithClientList) {
+                    for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
+                        if (entry.getValue() == null) {
+                            //issue motor
+                            entry.setValue(client);
+                            int smallRentedNum = rentalCompany.getSmallRentedNum();
+                            rentalCompany.setSmallRentedNum(smallRentedNum + 1);
                         }
                     }
                 }
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -156,12 +159,14 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
     public int canIssue(Motor motor, Client client) {
         if (motor == null || client == null) {
             //invalid param
-            return -1;
+            return -2;
         }
         List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
         if (IsOccupied(client, largeMotorWithClientList)) return 1;
+
         List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
         if (IsOccupied(client, smallMotorWithClientList)) return 1;
+
         License license = client.getLicense();
         boolean isFormal = license.getIsFormal();
         if (!isFormal) {
@@ -171,11 +176,15 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         int age = client.getAge();
         Date issueDate = license.getIssueDate();
         int issuedYear = Tools.getYearByDate(issueDate);
+        //rent largeMotor: whether it outnumber or equal the figure of max num
+        //and check the age and issuedYear
         if (motor.getClass().equals(LargeMotorcycle.class)
+                && rentalCompany.getLargeRentedNum() >= MyConstants.RENTED_LARGE_MAX_NUM
                 && (age < MyConstants.RENT_LARGE_LIMIT_AGE || issuedYear < MyConstants.RENT_LARGE_LICENSE_LIMIT_YEAR)) {
             //proof fail
             return 3;
         } else if (motor.getClass().equals(SmallMotorcycle.class)
+                && rentalCompany.getSmallRentedNum() >= MyConstants.RENTED_SMALL_MAX_NUM
                 && (age < MyConstants.RENT_SMALL_LIMIT_AGE || issuedYear < MyConstants.RENT_SMALL_LICENSE_LIMIT_YEAR)) {
             //proof fail
             return 3;
@@ -184,8 +193,8 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         return 0;
     }
 
-    private boolean IsOccupied(Client client, List<HashMap<Motor, Client>> smallMotorWithClientList) {
-        for (HashMap<Motor, Client> motorClientHashMap : smallMotorWithClientList) {
+    private boolean IsOccupied(Client client, List<HashMap<Motor, Client>> motorWithClientList) {
+        for (HashMap<Motor, Client> motorClientHashMap : motorWithClientList) {
             for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
                 //motor has been rented to others or client has rented
                 if (motorClientHashMap.get(entry.getKey()) != null
@@ -198,8 +207,45 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         return false;
     }
 
+    //TODO 电量返回
     @Override
     public int terminateRental(Client client) {
-        return 0;
+        Motor motor = null;
+        int batteryLevel = 0;
+        List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
+        List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
+        for (HashMap<Motor, Client> hashMap : smallMotorWithClientList) {
+            for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
+                if (entry.getValue() == client) {
+                    //delete record
+                    entry.setValue(null);
+                    int smallRentedNum = rentalCompany.getSmallRentedNum();
+                    rentalCompany.setSmallRentedNum(smallRentedNum - 1);
+                    motor = (SmallMotorcycle) entry.getKey();
+                    batteryLevel = MyConstants.SMALL_BATTERY_LEVEL - motor.getBatteryLevel();
+                    //recharge the battery and then return
+                    motor.setBatteryLevel(MyConstants.SMALL_BATTERY_LEVEL);
+                    return batteryLevel;
+                }
+            }
+        }
+
+        for (HashMap<Motor, Client> hashMap : largeMotorWithClientList) {
+            for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
+                if (entry.getValue() == client) {
+                    //delete record
+                    entry.setValue(null);
+                    int largeRentedNum = rentalCompany.getLargeRentedNum();
+                    rentalCompany.setLargeRentedNum(largeRentedNum - 1);
+                    motor = (LargeMotorcycle) entry.getKey();
+                    batteryLevel = MyConstants.LARGE_BATTERY_LEVEL - motor.getBatteryLevel();
+                    //recharge the battery and then return
+                    motor.setBatteryLevel(MyConstants.LARGE_BATTERY_LEVEL);
+                    return batteryLevel;
+                }
+            }
+        }
+        //didn't find this client
+        return -1;
     }
 }

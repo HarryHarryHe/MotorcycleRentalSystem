@@ -8,12 +8,9 @@ public class RentalCompany {
 
     //hungry singleton
     private static final RentalCompany rentalCompany = new RentalCompany();
-    private Client client;
 
-    private int availableLargeNum;
-    private int availableSmallNum;
     private int largeRentedNum = 0;
-    private int SmallRentedNum = 0;
+    private int smallRentedNum = 0;
     private HashMap<Motor, Client> largeMotorWithClientMap = new HashMap<>();
     private List<HashMap<Motor, Client>> largeMotorWithClientList = new ArrayList<>();
 
@@ -27,8 +24,24 @@ public class RentalCompany {
         return rentalCompany;
     }
 
+    public int getLargeRentedNum() {
+        return largeRentedNum;
+    }
+
+    public void setLargeRentedNum(int largeRentedNum) {
+        this.largeRentedNum = largeRentedNum;
+    }
+
+    public int getSmallRentedNum() {
+        return smallRentedNum;
+    }
+
+    public void setSmallRentedNum(int smallRentedNum) {
+        this.smallRentedNum = smallRentedNum;
+    }
+
     /**
-     * 获取摩托车与客户关系
+     * Get Motorcycle & Customer Relations
      * @return
      */
     public HashMap<Motor, Client> getLargeMotorWithClientMap() {
@@ -36,7 +49,7 @@ public class RentalCompany {
     }
 
     /**
-     * 设置摩托车与客户关系
+     * Set up motorcycle and customer relationships
      * @param largeMotorWithClientMap
      */
     public void setLargeMotorWithClientMap(HashMap<Motor, Client> largeMotorWithClientMap) {
@@ -44,7 +57,7 @@ public class RentalCompany {
     }
 
     /**
-     * 获取摩托车与用户的绑定关系列表
+     * Get the list of binding relationships between motorcycles and users
      * @return
      */
     public List<HashMap<Motor, Client>> getLargeMotorWithClientList() {
@@ -52,7 +65,7 @@ public class RentalCompany {
     }
 
     /**
-     * 将摩托车与用户绑定并设成集合
+     * Bind motorcycles to users and set them as a collection
      * @param largeMotorWithClientList
      */
     public void setLargeMotorWithClientList(List<HashMap<Motor, Client>> largeMotorWithClientList) {
