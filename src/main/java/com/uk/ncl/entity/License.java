@@ -72,7 +72,12 @@ public class License {
         this.issueDate = issueDate;
     }
 
+    /**
+     * Generate a unique driver's license ID based on initials, issue date and serial number
+     * @return licenseID
+     */
     public String genLicenseID() {
+        //in order to build final ID
         StringJoiner licenseIDSj = new StringJoiner("-");
         String[] name = client.getName().split(" ");
         String firstName = name[0].substring(0, 1);
@@ -80,7 +85,7 @@ public class License {
         String[] issueDate = Tools.getFormatDate(this.issueDate).split("-");
         String issueDateYear = issueDate[0];
         String serNum = String.format("%02d", new Random().nextInt(100));
-        licenseIDSj = licenseIDSj.add(firstName + lastName).add(issueDateYear).add(serNum);
+        licenseIDSj.add(firstName + lastName).add(issueDateYear).add(serNum);
         String licenseID = licenseIDSj.toString();
         while (licenseIDSet.contains(licenseID)) {
             genLicenseID();

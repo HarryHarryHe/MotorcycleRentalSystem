@@ -110,6 +110,13 @@ public abstract class Motor {
     protected Motor getRentedMotorByClient(Client client){
         return rentalCompanyService.getRentedMotorByClient(client);
     }
+
+    /**
+     * Calculate the power consumption required for this distance based on different vehicle types
+     * @param client
+     * @param distance riding distance
+     * @return The power consumed at this distance (kWh)
+     */
     protected int calConsumption(Client client,int distance){
         int consumption = 0;
         String motorType = rentalCompanyService.getMotorType(client);
@@ -122,9 +129,21 @@ public abstract class Motor {
             }
             return consumption;
         }
+        //UNKNOWN TYPE
         return -1;
     }
+
+    /**
+     * Calculate the amount of electricity required from the current battery level to full power
+     * */
     public abstract int calBattery2Full();
+
+    /**
+     * Determine whether the current user can call the riding method,
+     * for example, you need to determine whether the user rents a car.
+     * @param client
+     * @return
+     */
     protected boolean canRide(Client client) {
         if (client == null) {
             return false;
@@ -140,6 +159,12 @@ public abstract class Motor {
         return false;
     }
 
+    /**
+     * Determine whether the motorcycle rented by the user has electricity
+     * @param client
+     * @param motorWithClientList
+     * @return
+     */
     protected boolean hasMotorAndBattery(Client client, List<HashMap<Motor, Client>> motorWithClientList) {
         boolean hasMotorAndBattery = false;
         for (HashMap<Motor, Client> motorClientHashMap : motorWithClientList) {

@@ -17,6 +17,10 @@ public class SmallMotorFactory extends MotorFactory {
     private int availableNum = rentedMaxNum - rentedNum;
     private List<Motor> motorcycles = new ArrayList<>(rentedMaxNum);
 
+    /**
+     * Generate corresponding motorcycles based on production quantity, capacitor size, and power consumption
+     * @return
+     */
     @Override
     public boolean create() {
         List<HashMap<Motor, Client>> smallMotorWithClientList = new ArrayList<>();

@@ -19,13 +19,21 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
     public RentalCompanyServiceImpl() {
     }
 
+    /**
+     * This method returns the number of electric motorcycle of the specified type that are available to rent
+     * @param motorClazz the clazz of the subclass of Motor
+     * @return the number of electric motorcycle of the specified type that are available to rent
+     * @param <T>
+     */
     @Override
     public <T extends Motor> int getAvailableMotorByType(Class<T> motorClazz) {
         int count = 0;
+        //Calculate available quantities based on different types of motorcycles
         if (motorClazz.equals(LargeMotorcycle.class)) {
             List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
             for (HashMap<Motor, Client> motorClientHashMap : largeMotorWithClientList) {
                 for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
+                    //This shows that this motorcycle is not bound to the user, indicating that the motorcycle is available
                     if (Objects.isNull(entry.getValue())) {
                         count++;
                     }
@@ -45,6 +53,11 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         return count;
     }
 
+    /**
+     * Given a person, this method returns the electric motorcycle they are currently renting (if any)
+     * @param client the specific client
+     * @return The motorcycle rented by this client
+     */
     @Override
     public Motor getRentedMotorByClient(Client client) {
         List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
@@ -71,6 +84,10 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         return null;
     }
 
+    /**
+     * This method returns a collection of all the electric motorcycle currently rented out
+     * @return The list contains all rented motors
+     */
     @Override
     public List<Motor> getRentedMotors() {
         List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
@@ -87,18 +104,28 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
                 .map(Map.Entry::getKey)
                 .toList();
         List<Motor> totalRentedMotors = new ArrayList<>();
+        //put list of small and large motors together
         totalRentedMotors.addAll(rentedSmallList);
         totalRentedMotors.addAll(rentedLargeList);
         return totalRentedMotors;
     }
 
+    /**
+     * this method determines whether
+     * the person is eligible to rent a motorcycle of the specified type and, if there is a
+     * motorcycle available, issues an electric motorcycle of the specified type
+     * @param client specific client
+     * @param license specific license
+     * @param motor the type of motor
+     * @return whether company can issue the motor to the client
+     */
     @Override
     public boolean issueMotorToClient(Client client, License license, Motor motor) {
         client.setLicense(license);
         if (canIssue(motor, client) != 0) {
             return false;
         }
-
+        //Rent motorcycles of this motorcycle type to the user based on the motorcycle type
         String motorType = getMotorType(motor);
         if (!MyConstants.TYPE_UNKNOWN.equals(motorType)) {
             if (MyConstants.TYPE_LARGE.equals(motorType)) {
@@ -106,9 +133,10 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
                 for (HashMap<Motor, Client> hashMap : largeMotorWithClientList) {
                     for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
                         if (entry.getValue() == null) {
-                            //issue motor
+                            //issue motor, creat linking
                             entry.setValue(client);
                             int largeRentedNum = rentalCompany.getLargeRentedNum();
+                            //record the rentedNum
                             rentalCompany.setLargeRentedNum(largeRentedNum + 1);
                             return true;
                         }
@@ -120,7 +148,7 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
                 for (HashMap<Motor, Client> hashMap : smallMotorWithClientList) {
                     for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
                         if (entry.getValue() == null) {
-                            //issue motor
+                            //issue motor, creat linking
                             entry.setValue(client);
                             int smallRentedNum = rentalCompany.getSmallRentedNum();
                             rentalCompany.setSmallRentedNum(smallRentedNum + 1);
@@ -134,7 +162,7 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
     }
 
     /**
-     * get the type by motor
+     * Get the type by motor
      *
      * @param motor motor instance
      * @return string of the motor type
@@ -149,7 +177,7 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         return MyConstants.TYPE_UNKNOWN;
     }
 
-    //get the type of motor by client
+    //get the string type of motor by client
     public String getMotorType(Client client) {
         List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
         for (HashMap<Motor, Client> motorClientHashMap : largeMotorWithClientList) {
@@ -163,6 +191,15 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         return MyConstants.TYPE_UNKNOWN;
     }
 
+    /**
+     * The following rules determine the meaning and functionality of the ride method (and of the
+     * method to get the capacity of a motorcycle's battery):
+     *  A motorcycle cannot be ridden if it is not currently rented.
+     *  A motorcycle cannot be ridden if it has 0 or fewer kWh of charge in its battery
+     * @param motor
+     * @param client
+     * @return only return 0 that client could rent this motor
+     */
     @Override
     public int canIssue(Motor motor, Client client) {
         if (motor == null || client == null) {
@@ -211,6 +248,12 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         return 0;
     }
 
+    /**
+     * to check whether client has occupied a motor or this motor has been occupied
+     * @param client
+     * @param motorWithClientList
+     * @return whether motor don't have the owner && client don't own other motors
+     */
     private boolean beOccupied(Client client, List<HashMap<Motor, Client>> motorWithClientList) {
         boolean beOccupied = true;
         for (HashMap<Motor, Client> motorClientHashMap : motorWithClientList) {
@@ -231,24 +274,35 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         return beOccupied;
     }
 
+    /**
+     * This method terminates the given person's rental contract, effectively making the
+     * electric motorcycle available for rent by another person.
+     * @param client
+     * @return the battery charge level required to reach full capacity
+     */
     @Override
     public int terminateRental(Client client) {
         Motor motor = null;
         int batteryLevel2Full = 0;
         Motor motorcycle = getRentedMotorByClient(client);
+        //this client didn't rent any motors
         if (motorcycle == null) {
             return -1;
         }
+        //if rent largeMotor
         if (motorcycle.getClass().equals(LargeMotorcycle.class)) {
             List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
             for (HashMap<Motor, Client> hashMap : largeMotorWithClientList) {
                 for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
+                    //find this client in map
                     if (entry.getValue() == client) {
-                        //delete record
+                        //delete renting record
                         entry.setValue(null);
                         int largeRentedNum = rentalCompany.getLargeRentedNum();
+                        //Reduce the number of rented cars by 1
                         rentalCompany.setLargeRentedNum(largeRentedNum - 1);
                         motor = (LargeMotorcycle) entry.getKey();
+                        //Calculate the amount of energy required for a full charge
                         batteryLevel2Full = motor.calBattery2Full();
                         //recharge the battery and then return
                         motor.setBatteryLevel(MyConstants.LARGE_BATTERY_LEVEL);
@@ -257,6 +311,7 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
                 }
             }
         }
+        //if rent smallMotor
         if (motorcycle.getClass().equals(SmallMotorcycle.class)){
             List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
             for (HashMap<Motor, Client> hashMap : smallMotorWithClientList) {
@@ -275,9 +330,6 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
                 }
             }
         }
-
-
-
         //didn't find this client
         return -1;
     }

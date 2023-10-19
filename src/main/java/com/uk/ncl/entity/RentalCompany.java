@@ -15,6 +15,10 @@ public class RentalCompany {
     private List<HashMap<Motor, Client>> largeMotorWithClientList = new ArrayList<>();
 
     private HashMap<Motor, Client> smallMotorWithClientMap = new HashMap<>();
+
+    /**
+     * Records the association between motorcycles and users
+     */
     private List<HashMap<Motor, Client>> smallMotorWithClientList = new ArrayList<>();
 
     private RentalCompany(){}
