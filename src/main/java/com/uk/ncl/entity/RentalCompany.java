@@ -45,7 +45,7 @@ public class RentalCompany {
     }
 
     /**
-     * Get Motorcycle & Customer Relations
+     * Get Motorcycle and Customer Relations
      * @return
      */
     public HashMap<Motor, Client> getLargeMotorWithClientMap() {
