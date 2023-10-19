@@ -118,6 +118,7 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
                             entry.setValue(client);
                             int largeRentedNum = rentalCompany.getLargeRentedNum();
                             rentalCompany.setLargeRentedNum(largeRentedNum + 1);
+                            return true;
                         }
                     }
                 }
@@ -131,11 +132,11 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
                             entry.setValue(client);
                             int smallRentedNum = rentalCompany.getSmallRentedNum();
                             rentalCompany.setSmallRentedNum(smallRentedNum + 1);
+                            return true;
                         }
                     }
                 }
             }
-            return true;
         }
         return false;
     }

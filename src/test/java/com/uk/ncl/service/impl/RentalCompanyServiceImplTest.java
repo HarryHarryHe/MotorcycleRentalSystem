@@ -10,10 +10,11 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class RentalCompanyServiceImplTest{
+public class RentalCompanyServiceImplTest {
 
     static MotorFactory largeMotorFactory = null;
     static MotorFactory smallMotorFactory = null;
@@ -48,7 +49,7 @@ public class RentalCompanyServiceImplTest{
         client.setLicense(license);
         List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
         LargeMotorcycle motor = (LargeMotorcycle) largeMotorWithClientList.get(0).entrySet().iterator().next().getKey();
-        System.out.println(rentalCompanyService.canIssue(motor,client));
+        System.out.println(rentalCompanyService.canIssue(motor, client));
     }
 
     @Test
@@ -60,8 +61,39 @@ public class RentalCompanyServiceImplTest{
 
     @Test
     public void getRentedMotors() {
-        for (Motor motor: rentalCompanyService.getRentedMotors()){
+        for (Motor motor : rentalCompanyService.getRentedMotors()) {
             System.out.println(motor);
         }
+    }
+
+    @Test
+    public void issueMotorToClient() {
+        Client client = new Client("Haitao", "He", Tools.parseToDate("1996-07-20"));
+        License license = new License(Tools.parseToDate("2016-09-01"), true);
+        license.setClient(client);
+        license.setLicenseID(license.genLicenseID());
+        boolean canIssue = rentalCompanyService.issueMotorToClient(client, license, new LargeMotorcycle());
+        if (!canIssue) {
+            return;
+        }
+        List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
+//        System.out.println(canIssue);
+        largeMotorWithClientList.stream()
+                .flatMap(map -> map.entrySet().stream())
+                .filter(entry -> entry.getValue() != null)
+                .forEach(entry -> {
+                    Motor m = entry.getKey();
+                    Client c = entry.getValue();
+                    System.out.println("Motor: " + m.toString() + ", Client: " + c.toString());
+                });
+        System.out.println("getRentedMotorByClient: "+rentalCompanyService.getRentedMotorByClient(client));
+        System.out.println("getMotorType: "+rentalCompanyService.getMotorType(client));
+        System.out.println("getRentedMotors: "+rentalCompanyService.getRentedMotors());
+        System.out.println("getAvailableMotorByType: "+rentalCompanyService.getAvailableMotorByType(LargeMotorcycle.class));
+        System.out.println("getAvailableMotorByType: "+rentalCompanyService.getAvailableMotorByType(SmallMotorcycle.class));
+    }
+
+    @Test
+    public void terminateRental() {
     }
 }

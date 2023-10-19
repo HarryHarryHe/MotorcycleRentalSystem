@@ -14,6 +14,11 @@ public class License {
     public License() {
     }
 
+    public License(Date issueDate, boolean isFormal) {
+        this.issueDate = issueDate;
+        this.isFormal = isFormal;
+    }
+
     public License(String licenseID, Date issueDate, boolean isFormal) {
         this.licenseID = licenseID;
         this.issueDate = issueDate;
