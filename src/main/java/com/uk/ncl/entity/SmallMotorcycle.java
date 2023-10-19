@@ -8,6 +8,7 @@ public class SmallMotorcycle extends Motor {
     private int batteryLevel = MyConstants.SMALL_BATTERY_LEVEL;
     private int consumedPerKM = MyConstants.SMALL_CONSUMED_PER_KM;
     private String regNum;
+
     public SmallMotorcycle() {
     }
 
@@ -34,10 +35,10 @@ public class SmallMotorcycle extends Motor {
     @Override
     public boolean isFullyCharged() {
         boolean isFully = true;
-                if (batteryLevel < MyConstants.SMALL_BATTERY_LEVEL) {
-                    isFully = false;
-                }
-            return isFully;
+        if (batteryLevel < MyConstants.SMALL_BATTERY_LEVEL) {
+            isFully = false;
+        }
+        return isFully;
 
     }
 
@@ -55,18 +56,23 @@ public class SmallMotorcycle extends Motor {
 
     @Override
     public int ride(Client client, int distance) {
-        if (!canRide(client)){
+        if (!canRide(client)) {
             return 0;
         }
         Motor motor = super.getRentedMotorByClient(client);
         //ride another type of motor
-        if (!motor.getClass().equals(this.getClass())){
+        if (!motor.getClass().equals(this.getClass())) {
             return 0;
         }
         int consumption = calConsumption(client, distance);
         //cal the motor battery level
         motor.setBatteryLevel(motor.getBatteryLevel() - consumption);
         return consumption;
+    }
+
+    @Override
+    public int calBattery2Full() {
+        return MyConstants.SMALL_BATTERY_LEVEL - this.batteryLevel;
     }
 
     public String getRegNum() {

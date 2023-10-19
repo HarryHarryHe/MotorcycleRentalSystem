@@ -111,9 +111,30 @@ public class RentalCompanyServiceImplTest {
     }
 
     @Test
-    @Ignore
     public void terminateRental() {
+        Client client = new Client("Haitao", "He", Tools.parseToDate("1996-07-20"));
+        Client client2 = new Client("Guangzhen", "Zhou", Tools.parseToDate("1999-07-20"));
+        License license = new License(Tools.parseToDate("2016-09-01"), true);
+        License license2 = new License(Tools.parseToDate("2016-09-01"), true);
+        license.setClient(client);
+        license2.setClient(client2);
+        license.setLicenseID(license.genLicenseID());
+        license2.setLicenseID(license2.genLicenseID());
+        assertTrue(rentalCompanyService.issueMotorToClient(client, license, new LargeMotorcycle()));
+        assertTrue(rentalCompanyService.issueMotorToClient(client2, license2, new SmallMotorcycle()));
+        System.out.printf("before terminateRental====>  largeRentedNum: %s, smallRentedNum: %s, largeAvailableNum: %s, smallAvailableNum: %s ",
+                 rentalCompany.getLargeRentedNum(),rentalCompany.getSmallRentedNum(),
+                rentalCompanyService.getAvailableMotorByType(LargeMotorcycle.class),rentalCompanyService.getAvailableMotorByType(SmallMotorcycle.class));
 
-//        rentalCompanyService.terminateRental();
+        System.out.println();
+        rentalCompanyService.terminateRental(client);
+        System.out.printf("after terminateRental====>  largeRentedNum: %s, smallRentedNum: %s, largeAvailableNum: %s, smallAvailableNum: %s ",
+                 rentalCompany.getLargeRentedNum(),rentalCompany.getSmallRentedNum(),
+                rentalCompanyService.getAvailableMotorByType(LargeMotorcycle.class),rentalCompanyService.getAvailableMotorByType(SmallMotorcycle.class));
+        rentalCompanyService.terminateRental(client2);
+        System.out.println();
+        System.out.printf("after terminateRental====>  largeRentedNum: %s, smallRentedNum: %s, largeAvailableNum: %s, smallAvailableNum: %s ",
+                rentalCompany.getLargeRentedNum(),rentalCompany.getSmallRentedNum(),
+                rentalCompanyService.getAvailableMotorByType(LargeMotorcycle.class),rentalCompanyService.getAvailableMotorByType(SmallMotorcycle.class));
     }
 }

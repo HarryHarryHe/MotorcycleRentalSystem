@@ -234,40 +234,50 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
     @Override
     public int terminateRental(Client client) {
         Motor motor = null;
-        int batteryLevel = 0;
-        List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
-        List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
-        for (HashMap<Motor, Client> hashMap : smallMotorWithClientList) {
-            for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
-                if (entry.getValue() == client) {
-                    //delete record
-                    entry.setValue(null);
-                    int smallRentedNum = rentalCompany.getSmallRentedNum();
-                    rentalCompany.setSmallRentedNum(smallRentedNum - 1);
-                    motor = (SmallMotorcycle) entry.getKey();
-                    batteryLevel = MyConstants.SMALL_BATTERY_LEVEL - motor.getBatteryLevel();
-                    //recharge the battery and then return
-                    motor.setBatteryLevel(MyConstants.SMALL_BATTERY_LEVEL);
-                    return batteryLevel;
+        int batteryLevel2Full = 0;
+        Motor motorcycle = getRentedMotorByClient(client);
+        if (motorcycle == null) {
+            return -1;
+        }
+        if (motorcycle.getClass().equals(LargeMotorcycle.class)) {
+            List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
+            for (HashMap<Motor, Client> hashMap : largeMotorWithClientList) {
+                for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
+                    if (entry.getValue() == client) {
+                        //delete record
+                        entry.setValue(null);
+                        int largeRentedNum = rentalCompany.getLargeRentedNum();
+                        rentalCompany.setLargeRentedNum(largeRentedNum - 1);
+                        motor = (LargeMotorcycle) entry.getKey();
+                        batteryLevel2Full = motor.calBattery2Full();
+                        //recharge the battery and then return
+                        motor.setBatteryLevel(MyConstants.LARGE_BATTERY_LEVEL);
+                        return batteryLevel2Full;
+                    }
+                }
+            }
+        }
+        if (motorcycle.getClass().equals(SmallMotorcycle.class)){
+            List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
+            for (HashMap<Motor, Client> hashMap : smallMotorWithClientList) {
+                for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
+                    if (entry.getValue() == client) {
+                        //delete record
+                        entry.setValue(null);
+                        int smallRentedNum = rentalCompany.getSmallRentedNum();
+                        rentalCompany.setSmallRentedNum(smallRentedNum - 1);
+                        motor = (SmallMotorcycle) entry.getKey();
+                        batteryLevel2Full = motor.calBattery2Full();
+                        //recharge the battery and then return
+                        motor.setBatteryLevel(MyConstants.SMALL_BATTERY_LEVEL);
+                        return batteryLevel2Full;
+                    }
                 }
             }
         }
 
-        for (HashMap<Motor, Client> hashMap : largeMotorWithClientList) {
-            for (Map.Entry<Motor, Client> entry : hashMap.entrySet()) {
-                if (entry.getValue() == client) {
-                    //delete record
-                    entry.setValue(null);
-                    int largeRentedNum = rentalCompany.getLargeRentedNum();
-                    rentalCompany.setLargeRentedNum(largeRentedNum - 1);
-                    motor = (LargeMotorcycle) entry.getKey();
-                    batteryLevel = MyConstants.LARGE_BATTERY_LEVEL - motor.getBatteryLevel();
-                    //recharge the battery and then return
-                    motor.setBatteryLevel(MyConstants.LARGE_BATTERY_LEVEL);
-                    return batteryLevel;
-                }
-            }
-        }
+
+
         //didn't find this client
         return -1;
     }

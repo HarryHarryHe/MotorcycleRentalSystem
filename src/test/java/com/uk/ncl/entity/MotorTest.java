@@ -38,7 +38,7 @@ public class MotorTest {
 
     @Test
     public void chargeMotor() {
-        Client client = new Client("Haitao", "He", Tools.parseToDate("1996-07-20"));
+        Client client = new Client("Hao", "Liu", Tools.parseToDate("1996-07-20"));
         License license = new License(Tools.parseToDate("2016-09-01"), true);
         license.setClient(client);
         license.setLicenseID(license.genLicenseID());
@@ -57,7 +57,7 @@ public class MotorTest {
 
     @Test
     public void ride() {
-        Client client = new Client("Haitao", "He", Tools.parseToDate("1996-07-20"));
+        Client client = new Client("Haitao", "He", Tools.parseToDate("1990-01-01"));
         License license = new License(Tools.parseToDate("2016-09-01"), true);
         license.setClient(client);
         license.setLicenseID(license.genLicenseID());

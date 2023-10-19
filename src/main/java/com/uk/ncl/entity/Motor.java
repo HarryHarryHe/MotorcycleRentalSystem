@@ -124,7 +124,7 @@ public abstract class Motor {
         }
         return -1;
     }
-
+    public abstract int calBattery2Full();
     protected boolean canRide(Client client) {
         if (client == null) {
             return false;

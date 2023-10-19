@@ -83,6 +83,11 @@ public class LargeMotorcycle extends Motor {
     }
 
     @Override
+    public int calBattery2Full() {
+        return MyConstants.SMALL_BATTERY_LEVEL - this.batteryLevel;
+    }
+
+    @Override
     public String toString() {
         return "LargeMotorcycle{" +
                 "batteryLevel=" + batteryLevel +
