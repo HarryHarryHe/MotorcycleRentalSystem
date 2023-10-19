@@ -1,10 +1,9 @@
 package com.uk.ncl.entity;
 
 import com.uk.ncl.constant.MyConstants;
+import com.uk.ncl.service.impl.RentalCompanyServiceImpl;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Motor {
     /**
@@ -12,6 +11,8 @@ public abstract class Motor {
      */
     private static Set<String> usedRegNumSet = new HashSet<>();
     private RentalCompany rentalCompany = RentalCompany.getRentalCompany();
+
+    private RentalCompanyServiceImpl rentalCompanyService = new RentalCompanyServiceImpl();
     private int batteryLevel = MyConstants.LARGE_BATTERY_LEVEL;
     private int consumedPerKM = MyConstants.LARGE_CONSUMED_PER_KM;
     private int consumedKM = 0;
@@ -74,7 +75,7 @@ public abstract class Motor {
     public abstract void setConsumedPerKM(int consumedPerKM);
 
     //get the driving distance of the motor
-    public int getConsumedKM(){
+    public int getConsumedKM() {
         return this.consumedKM;
     }
 
@@ -84,50 +85,103 @@ public abstract class Motor {
 
     /**
      * to check whether it is fully charged
+     *
      * @return is or not
      */
-    public boolean isFullyCharged(){
+    public boolean isFullyCharged() {
         boolean isFully = true;
-        if (this.getClass().equals(LargeMotorcycle.class)){
+        if (this.getClass().equals(LargeMotorcycle.class)) {
             if (this.batteryLevel < MyConstants.LARGE_BATTERY_LEVEL) {
                 isFully = false;
             }
         }
-        if (this.getClass().equals(SmallMotorcycle.class)){
+        if (this.getClass().equals(SmallMotorcycle.class)) {
             if (this.batteryLevel < MyConstants.SMALL_BATTERY_LEVEL) {
                 isFully = false;
             }
         }
         return isFully;
     }
+
     /**
      * A method to add a given amount of charge in kWh to the battery (up to the battery's
      * capacity) and which, after execution, indicates how much charge was added.
+     *
      * @param capacity unit kw.h
      * @return the charging capacity from this to max
      */
-    public int chargeMotor(int capacity){
+    public int chargeMotor(int capacity) {
         int gap2Max = 0;
-        if (this.getClass().equals(LargeMotorcycle.class)){
-            if (capacity<MyConstants.LARGE_BATTERY_LEVEL){
+        if (this.getClass().equals(LargeMotorcycle.class)) {
+            if (capacity < MyConstants.LARGE_BATTERY_LEVEL) {
                 gap2Max = MyConstants.LARGE_BATTERY_LEVEL - capacity;
             }
         }
-        if (this.getClass().equals(SmallMotorcycle.class)){
-            if (capacity<MyConstants.SMALL_BATTERY_LEVEL){
+        if (this.getClass().equals(SmallMotorcycle.class)) {
+            if (capacity < MyConstants.SMALL_BATTERY_LEVEL) {
                 gap2Max = MyConstants.SMALL_BATTERY_LEVEL - capacity;
             }
         }
         return gap2Max;
     }
 
-    public int ride(Client client){
-        canRide(client);
-        return 2;
+    /**
+     * A method to "ride" the motorcycle for a given number of kilometers, returning the
+     * amount of kWh consumed during the journey.
+     * @param client  Driver
+     * @param distance Unit:km
+     * @return returning the amount of kWh consumed during the journey.
+     */
+    public int ride(Client client,int distance) {
+        if (!canRide(client)){
+            return 0;
+        }
+        int consumption = calConsumption(client, distance);
+        Motor motor = rentalCompanyService.getRentedMotorByClient(client);
+        //cal the motor battery level
+        motor.setBatteryLevel(motor.getBatteryLevel() - consumption);
+        return consumption;
+    }
+
+    private int calConsumption(Client client,int distance){
+        int consumption = 0;
+        String motorType = rentalCompanyService.getMotorType(client);
+        if (!MyConstants.TYPE_UNKNOWN.equals(motorType)) {
+            if (MyConstants.TYPE_LARGE.equals(motorType)){
+                consumption = MyConstants.LARGE_CONSUMED_PER_KM * distance;
+            }
+            if (MyConstants.TYPE_SMALL.equals(motorType)){
+                consumption = MyConstants.SMALL_CONSUMED_PER_KM * distance;
+            }
+            return consumption;
+        }
+        return -1;
     }
 
     private boolean canRide(Client client) {
+        if (client == null) {
+            return false;
+        }
+        List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
+        List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
+        if (hasMotorAndBattery(client, (List<HashMap<Motor, Client>>) largeMotorWithClientList)) {
+            return true;
+        }
+        if (hasMotorAndBattery(client, (List<HashMap<Motor, Client>>) smallMotorWithClientList)) {
+            return true;
+        }
+        return false;
+    }
 
+    private boolean hasMotorAndBattery(Client client, List<HashMap<Motor, Client>> motorWithClientList) {
+        for (HashMap<Motor, Client> motorClientHashMap : motorWithClientList) {
+            for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
+                if (client.equals(entry.getValue())
+                        && entry.getKey().batteryLevel > 0) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 //according to the type of motor to invoke different methods

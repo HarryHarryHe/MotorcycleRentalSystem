@@ -27,6 +27,7 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
 
     }
 
+
     @Override
     public <T extends Motor> int getAvailableMotorByType(Class<T> motorClazz) {
         int count = 0;
@@ -145,12 +146,26 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
      * @param motor motor instance
      * @return string of the motor type
      */
-    public String getMotorType(Motor motor) {
+    private String getMotorType(Motor motor) {
         if (motor.getClass().equals(LargeMotorcycle.class)) {
             return MyConstants.TYPE_LARGE;
         }
         if (motor.getClass().equals(SmallMotorcycle.class)) {
             return MyConstants.TYPE_SMALL;
+        }
+        return MyConstants.TYPE_UNKNOWN;
+    }
+
+    //get the type of motor by client
+    public String getMotorType(Client client) {
+        List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
+        for (HashMap<Motor, Client> motorClientHashMap : largeMotorWithClientList) {
+            for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
+                if (client.equals(entry.getValue())) {
+                    return entry.getKey().getClass().equals(LargeMotorcycle.class)
+                            ? MyConstants.TYPE_LARGE : MyConstants.TYPE_SMALL;
+                }
+            }
         }
         return MyConstants.TYPE_UNKNOWN;
     }
