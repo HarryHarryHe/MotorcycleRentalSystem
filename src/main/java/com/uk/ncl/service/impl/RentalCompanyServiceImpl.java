@@ -194,8 +194,8 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
     /**
      * The following rules determine the meaning and functionality of the ride method (and of the
      * method to get the capacity of a motorcycle's battery):
-     *  A motorcycle cannot be ridden if it is not currently rented.
-     *  A motorcycle cannot be ridden if it has 0 or fewer kWh of charge in its battery
+     * A motorcycle cannot be ridden if it is not currently rented.
+     * A motorcycle cannot be ridden if it has 0 or fewer kWh of charge in its battery
      * @param motor
      * @param client
      * @return only return 0 that client could rent this motor
