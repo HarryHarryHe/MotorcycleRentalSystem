@@ -177,11 +177,6 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
             //invalid param
             return -2;
         }
-        List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
-        if (IsOccupied(client, largeMotorWithClientList)) return 1;
-
-        List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
-        if (IsOccupied(client, smallMotorWithClientList)) return 1;
 
         License license = client.getLicense();
         boolean isFormal = license.getIsFormal();
@@ -192,35 +187,54 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         int age = client.getAge();
         Date issueDate = license.getIssueDate();
         int issuedYear = Tools.getYearByDate(issueDate);
+
         //rent largeMotor: whether it outnumber or equal the figure of max num
         //and check the age and issuedYear
-        if (motor.getClass().equals(LargeMotorcycle.class)
-                && rentalCompany.getLargeRentedNum() >= MyConstants.RENTED_LARGE_MAX_NUM
-                && (age < MyConstants.RENT_LARGE_LIMIT_AGE || issuedYear < MyConstants.RENT_LARGE_LICENSE_LIMIT_YEAR)) {
-            //proof fail
-            return 3;
-        } else if (motor.getClass().equals(SmallMotorcycle.class)
-                && rentalCompany.getSmallRentedNum() >= MyConstants.RENTED_SMALL_MAX_NUM
-                && (age < MyConstants.RENT_SMALL_LIMIT_AGE || issuedYear < MyConstants.RENT_SMALL_LICENSE_LIMIT_YEAR)) {
-            //proof fail
-            return 3;
+        if (motor.getClass().equals(LargeMotorcycle.class)) {
+            if ((age < MyConstants.RENT_LARGE_LIMIT_AGE || issuedYear < MyConstants.RENT_LARGE_LICENSE_LIMIT_YEAR)) {
+                //proof fail
+                return 3;
+            }
+            List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
+            // if the client had rented or no available motors return 1
+            if (beOccupied(client, largeMotorWithClientList)) return 1;
+            if (rentalCompany.getLargeRentedNum() >= MyConstants.RENTED_LARGE_MAX_NUM) {
+                    //proof fail
+                    return 3;
+            }
+
+        } else if (motor.getClass().equals(SmallMotorcycle.class)) {
+            if ((age < MyConstants.RENT_SMALL_LIMIT_AGE || issuedYear < MyConstants.RENT_SMALL_LICENSE_LIMIT_YEAR)) {
+                return 3;
+            }
+            List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
+            // if the client had rented or no available motors return 1
+            if (beOccupied(client, largeMotorWithClientList)) return 1;
+            if (rentalCompany.getSmallRentedNum() >= MyConstants.RENTED_SMALL_MAX_NUM) {
+                //proof fail)
+                return 3;
+            }
         }
         //could tent
         return 0;
     }
 
-    private boolean IsOccupied(Client client, List<HashMap<Motor, Client>> motorWithClientList) {
+    private boolean beOccupied(Client client, List<HashMap<Motor, Client>> motorWithClientList) {
+        boolean beOccupied = true;
         for (HashMap<Motor, Client> motorClientHashMap : motorWithClientList) {
             for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
                 //motor has been rented to others or client has rented
-                if (motorClientHashMap.get(entry.getKey()) != null
-                        || client.equals(entry.getValue())) {
-                    //already have rented
-                    return true;
+                if (entry.getValue() == null) {
+                    //available
+                    beOccupied = false;
+                }
+                if (entry.getValue() == client) {
+                    //had been rented
+                    beOccupied = true;
                 }
             }
         }
-        return false;
+        return beOccupied;
     }
 
     //TODO 电量返回
