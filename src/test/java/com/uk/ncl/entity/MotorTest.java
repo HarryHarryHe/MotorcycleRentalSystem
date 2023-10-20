@@ -30,10 +30,16 @@ public class MotorTest {
 
     @Test
     public void isFullyCharged() {
+        //max battery is 75
         Motor largeMotor = new LargeMotorcycle(55);
+        Motor largeMotor1 = new LargeMotorcycle(75);
+        //max battery is 50
         Motor smallMotor = new SmallMotorcycle(20);
+        Motor smallMotor1 = new SmallMotorcycle(50);
         assertFalse(largeMotor.isFullyCharged());
         assertFalse(smallMotor.isFullyCharged());
+        assertTrue(largeMotor1.isFullyCharged());
+        assertTrue(smallMotor1.isFullyCharged());
     }
 
     @Test
@@ -43,16 +49,16 @@ public class MotorTest {
         license.setClient(client);
         license.setLicenseID(license.genLicenseID());
         int consumption = 0;
-        System.out.println("Rent Large: " + rentalCompanyService.issueMotorToClient(client, license, new LargeMotorcycle()));
+        assertTrue(rentalCompanyService.issueMotorToClient(client, license, new LargeMotorcycle()));
         Motor motor = rentalCompanyService.getRentedMotorByClient(client);
+        //the battery consumption that riding 40 km
         consumption = motor.ride(client, 40);
         assertEquals(80, consumption);
-//        System.out.println("consumption: " + consumption);
+        //current batteryLevel
         assertEquals(-5, motor.getBatteryLevel());
-//        System.out.println("motor battery level before charging: " + motor.getBatteryLevel());
+        //charge motor and let battery be full
         motor.chargeMotor(500);
         assertEquals(70, motor.getBatteryLevel());
-//        System.out.println("motor battery level after charging: " + motor.getBatteryLevel());
     }
 
     @Test
@@ -62,8 +68,10 @@ public class MotorTest {
         license.setClient(client);
         license.setLicenseID(license.genLicenseID());
         int consumption = 0;
-        System.out.println("Rent Large: " + rentalCompanyService.issueMotorToClient(client, license, new LargeMotorcycle()));
+        //issue motor
+        assertTrue(rentalCompanyService.issueMotorToClient(client, license, new LargeMotorcycle()));
         Motor motor = rentalCompanyService.getRentedMotorByClient(client);
+        //ride 80 km
         consumption = motor.ride(client, 80);
         System.out.println("consumption: " + consumption);
         System.out.println("motor battery level: " + motor.getBatteryLevel());

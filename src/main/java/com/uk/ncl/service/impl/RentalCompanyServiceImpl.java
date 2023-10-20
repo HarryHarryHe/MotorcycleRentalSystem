@@ -30,25 +30,10 @@ public class RentalCompanyServiceImpl implements RentalCompanyService {
         int count = 0;
         //Calculate available quantities based on different types of motorcycles
         if (motorClazz.equals(LargeMotorcycle.class)) {
-            List<HashMap<Motor, Client>> largeMotorWithClientList = rentalCompany.getLargeMotorWithClientList();
-            for (HashMap<Motor, Client> motorClientHashMap : largeMotorWithClientList) {
-                for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
-                    //This shows that this motorcycle is not bound to the user, indicating that the motorcycle is available
-                    if (Objects.isNull(entry.getValue())) {
-                        count++;
-                    }
-                }
-            }
+            count = MyConstants.RENTED_LARGE_MAX_NUM - rentalCompany.getLargeRentedNum();
         }
         if (motorClazz.equals(SmallMotorcycle.class)) {
-            List<HashMap<Motor, Client>> smallMotorWithClientList = rentalCompany.getSmallMotorWithClientList();
-            for (HashMap<Motor, Client> motorClientHashMap : smallMotorWithClientList) {
-                for (Map.Entry<Motor, Client> entry : motorClientHashMap.entrySet()) {
-                    if (Objects.isNull(entry.getValue())) {
-                        count++;
-                    }
-                }
-            }
+            count = MyConstants.RENTED_SMALL_MAX_NUM - rentalCompany.getSmallRentedNum();
         }
         return count;
     }
